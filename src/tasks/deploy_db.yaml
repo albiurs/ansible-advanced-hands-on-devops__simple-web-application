@@ -1,0 +1,38 @@
+- name: Install MySQL database
+  # apt-get install -y mysql-server mysql-client
+  become: true
+  become_method: su
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mysql-server
+    - mysql-client
+
+- name: Start MySQL Service
+  # service mysql start
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Create Application database
+  # mysql -u <username> -p  # root/''
+  # mysql> CREATE DATABASE employee_db;
+  community.mysql.mysql_db: 
+    name: "{{ db_name }}"
+    login_user: 'root'
+    login_password: ''
+    state: present
+
+- name: Create Database user
+  # mysql -u <username> -p
+  # mysql> GRANT ALL ON *.* to db_user@'%' IDENTIFIED BY 'Passw0rd';
+  # mysql> USE employee_db;
+  # mysql> CREATE TABLE employees (name VARCHAR(20));
+  community.mysql.mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password  }}"
+    priv: '*.*:ALL'
+    state: present
+    host: '%'

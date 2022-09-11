@@ -1,0 +1,34 @@
+---
+- name: Deploy a web application
+  hosts: target1
+
+  tasks:
+    - name: Install required depnendencies
+      # su -
+      # apt update && apt upgrade -y
+      # apt-get install -y python python-setuptools python-dev build-essential python3-pip
+      become: true
+      become_method: su
+      ansible.builtin.apt:
+        name: '{{ item }}'
+        state: present
+      with_items:
+        - python
+        - python-setuptools
+        - python-dev 
+        - build-essential 
+        - python3-pip
+
+    - name: Install pip packages
+      # su -
+      # pip3 install pymysql
+      # By default, Ansible will take the appropriate version for the python interpreter use by ansible, e.g. pip3 on python 3, and pip2 or pip on python 2.
+      become: true
+      become_method: su
+      ansible.builtin.pip:
+        name: pymysql
+        state: present
+
+    - ansible.builtin.import_tasks: tasks/deploy_db.yaml
+
+    - ansible.builtin.import_tasks: tasks/deploy_web.yaml

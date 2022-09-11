@@ -1,0 +1,11 @@
+---
+- name: Shutdown Servers
+  hosts: target1
+  tasks:
+  - name: Delay shutting down the remote node
+    # su -
+    # shutdown -h now
+    become: true
+    become_method: su
+    community.general.shutdown:
+      delay: 5
