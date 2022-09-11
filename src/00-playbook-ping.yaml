@@ -1,0 +1,6 @@
+---
+- name: Ping test
+  hosts: target1
+  tasks:
+  - name: Ping target
+    ping: 

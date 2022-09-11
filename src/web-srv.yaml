@@ -1,0 +1,11 @@
+---
+- name: Deploy Webserver
+  hosts: target1
+
+  tasks:
+    - name: Install apt packages
+    # apt-get install -y python python-setuptools python-dev build-essential
+    
+    - name: Install pip packages
+    # pip3 install pymysql
+    
