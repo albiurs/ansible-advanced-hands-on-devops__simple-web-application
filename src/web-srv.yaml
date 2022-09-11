@@ -4,8 +4,10 @@
 
   tasks:
     - name: Install apt packages
-    # apt-get install -y python python-setuptools python-dev build-essential
+    # su -
+    # apt update && apt upgrade -y
+    # apt-get install -y python python-setuptools python-dev build-essential python3-pip
     
     - name: Install pip packages
+    # su -
     # pip3 install pymysql
-    
