@@ -6,8 +6,10 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - mysql-server
-    - mysql-client
+    - default-mysql-server
+    - default-mysql-client
+    #- mysql-server
+    #- mysql-client
 
 - name: Start MySQL Service
   # service mysql start
@@ -16,13 +18,39 @@
     state: started
     enabled: yes
 
+- name: Set password for root user
+  become: true
+  become_method: su
+  mysql_user:
+    login_user: "root"
+    login_password: "{{ db_name }}"
+    user: "root"
+    password: "{{ db_root_password }}"
+    priv: '*.*:ALL,GRANT'
+    host: 'localhost'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+
+- name: Save root password in .my.cnf
+  become: true
+  become_method: su
+  template:
+    src: root_cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    mode: '0600'
+
+
 - name: Create Application database
   # mysql -u <username> -p  # root/''
   # mysql> CREATE DATABASE employee_db;
-  community.mysql.mysql_db: 
+  become: true
+  become_method: su
+  community.mysql.mysql_db:
+    #name: db_name
     name: "{{ db_name }}"
     login_user: 'root'
-    login_password: ''
+    login_password: "{{ db_root_password }}"
     state: present
 
 - name: Create Database user
@@ -31,6 +59,8 @@
   # mysql> USE employee_db;
   # mysql> CREATE TABLE employees (name VARCHAR(20));
   community.mysql.mysql_user:
+    login_user: "root"
+    login_password: "{{ db_root_password }}"
     name: "{{ db_user }}"
     password: "{{ db_password  }}"
     priv: '*.*:ALL'
