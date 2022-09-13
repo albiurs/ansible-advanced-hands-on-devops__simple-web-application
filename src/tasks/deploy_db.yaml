@@ -27,7 +27,7 @@
   become_method: su
   mysql_user:
     login_user: "root"
-    login_password: "{{ db_name }}"
+    login_password: ""
     user: "root"
     password: "{{ db_root_password }}"
     priv: '*.*:ALL,GRANT'

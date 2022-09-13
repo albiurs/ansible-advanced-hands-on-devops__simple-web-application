@@ -12,7 +12,9 @@
 
 - name: Copy source code to target server
   # Copy source code file to remote host
-  ansible.builtin.copy: src=app.py dest=/opt/app.py
+  become: true
+  become_method: su
+  ansible.builtin.copy: src=./assets/app.py dest=/opt/app.py
 
 - name: Start Web server
   # run shell command to start flask
