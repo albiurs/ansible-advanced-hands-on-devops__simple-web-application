@@ -1,7 +1,7 @@
 - name: Install MySQL database
   # go for MariaDB
   # apt install default-mysql-server default-mysql-client
-  # Example using MySQL:
+  # Alternative example using MySQL:
   # https://gist.github.com/zak39/a1b342eb8568fcc68728a5a91d92445a
   become: true
   become_method: su
@@ -20,6 +20,8 @@
     enabled: yes
 
 # Manage first passwordless DB root login
+# By default the root login with empty password from the network (which Ansible does) is forbidden.
+# Therefore, the root password must be set to get access by Ansible.
 # https://stackoverflow.com/questions/63791797/why-can-ansible-not-connect-to-mysql
 # https://serverfault.com/questions/891373/unable-to-create-mysql-database-through-ansible
 - name: Set password for root user
@@ -35,6 +37,7 @@
     login_unix_socket: /var/run/mysqld/mysqld.sock
     state: present
 
+# Save root password in /root/.my.cnf form the template in src/templates/root_cnf.j2
 - name: Save root password in .my.cnf
   become: true
   become_method: su
@@ -51,7 +54,6 @@
   become: true
   become_method: su
   community.mysql.mysql_db:
-    #name: db_name
     name: "{{ db_name }}"
     login_user: 'root'
     login_password: "{{ db_root_password }}"

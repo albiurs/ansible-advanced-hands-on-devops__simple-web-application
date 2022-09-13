@@ -6,9 +6,10 @@
   ansible.builtin.pip:
     name: '{{ item }}'
     state: present
-  with_items: 
-    - flask
+  with_items:
     - flask-mysql
+    - flask
+
 
 - name: Copy source code to target server
   # Copy source code file to remote host
@@ -18,5 +19,7 @@
 
 - name: Start Web server
   # run shell command to start flask
+  become: true
+  become_method: su
   ansible.builtin.shell: 
-    cmd: FLASK_APP=/opt nohup flask run --host=0.0.0.0 &
+    cmd: FLASK_APP=/opt/app.py nohup flask run --host=0.0.0.0 &
