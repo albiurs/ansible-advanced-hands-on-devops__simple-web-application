@@ -18,4 +18,5 @@
 
 - name: Start Web server
   # run shell command to start flask
-  ansible.builtin.shell: FLASK_APP=/opt nohup flask run --host=0.0.0.0 &
+  ansible.builtin.shell: 
+    cmd: FLASK_APP=/opt nohup flask run --host=0.0.0.0 &
