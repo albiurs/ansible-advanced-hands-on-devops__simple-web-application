@@ -1,0 +1,25 @@
+- name: Install Python Flask dependency
+  # pip install flask
+  # pip install flask-mysql
+  become: true
+  become_method: su
+  ansible.builtin.pip:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - flask-mysql
+    - flask
+
+
+- name: Copy source code to target server
+  # Copy source code file to remote host
+  become: true
+  become_method: su
+  ansible.builtin.copy: src=./assets/app.py dest=/opt/app.py
+
+- name: Start Web server
+  # run shell command to start flask
+  become: true
+  become_method: su
+  ansible.builtin.shell: 
+    cmd: FLASK_APP=/opt/app.py nohup flask run --host=0.0.0.0 &

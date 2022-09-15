@@ -1,0 +1,77 @@
+---
+# tasks file for mysql_db
+
+- name: Install MySQL database
+  # go for MariaDB
+  # apt install default-mysql-server default-mysql-client
+  # Alternative example using MySQL:
+  # https://gist.github.com/zak39/a1b342eb8568fcc68728a5a91d92445a
+  become: true
+  become_method: su
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - default-mysql-server
+    - default-mysql-client
+
+- name: Start MySQL Service
+  # service mysql start
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: yes
+
+# Manage first passwordless DB root login
+# By default the root login with empty password from the network (which Ansible does) is forbidden.
+# Therefore, the root password must be set to get access by Ansible.
+# https://stackoverflow.com/questions/63791797/why-can-ansible-not-connect-to-mysql
+# https://serverfault.com/questions/891373/unable-to-create-mysql-database-through-ansible
+- name: Set password for root user
+  become: true
+  become_method: su
+  mysql_user:
+    login_user: "root"
+    login_password: ""
+    user: "root"
+    password: "{{ db_root_password }}"
+    priv: '*.*:ALL,GRANT'
+    host: 'localhost'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+
+# Save root password in /root/.my.cnf form the template in src/templates/root_cnf.j2
+- name: Save root password in .my.cnf
+  become: true
+  become_method: su
+  template:
+    src: root_cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    mode: '0600'
+
+
+- name: Create Application database
+  # mysql -u root -p  # root/''
+  # mysql> CREATE DATABASE employee_db;
+  become: true
+  become_method: su
+  community.mysql.mysql_db:
+    name: "{{ db_name }}"
+    login_user: 'root'
+    login_password: "{{ db_root_password }}"
+    state: present
+
+- name: Create Database user
+  # mysql -u <username> -p
+  # mysql> GRANT ALL ON *.* to db_user@'%' IDENTIFIED BY 'Passw0rd';
+  # mysql> USE employee_db;
+  # mysql> CREATE TABLE employees (name VARCHAR(20));
+  community.mysql.mysql_user:
+    login_user: "root"
+    login_password: "{{ db_root_password }}"
+    name: "{{ db_user }}"
+    password: "{{ db_password  }}"
+    priv: '*.*:ALL'
+    state: present
+    host: '%'
