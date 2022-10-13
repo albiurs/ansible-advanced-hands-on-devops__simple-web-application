@@ -1,0 +1,51 @@
+---
+- name: Deploy Web App
+  hosts: db_and_web_servers
+  tasks: 
+    - command: /opt/monitor_webapp.py
+      # expected execution time [sec]
+      async: 360
+      # poll: re-check async task [sec] (default 10 sec)
+      poll: 60
+
+    # Watit until first task has finished.
+    # Proceeed with second task after finished.
+
+    - command: /opt/monitor_database.py
+      # expected execution time [sec]
+      async: 360
+      # poll: re-check async task [sec] (default 10 sec)
+      poll: 60
+
+
+
+- name: Deploy Web App
+  hosts: db_and_web_servers
+  tasks: 
+    - command: /opt/monitor_webapp.py
+      # expected execution time [sec]
+      async: 360
+      # poll = 0: emediately proceed with next task
+      poll: 0
+      # Register the task result to a variable
+      register: webapp_result
+
+    # No waiting to finish first task.
+    # Immediately proceed with second task.
+
+    - command: /opt/monitor_database.py
+      # expected execution time [sec]
+      async: 360
+      # poll = 0: emediately proceed with next task
+      poll: 0
+      # Register the task result to a variable
+      register: database_result 
+
+    - name: Check status of the async tasks
+      # Pass the jid (=job ID) from the webapp_result variable to async_status module.
+      async_status: jid={{ webapp_result.ansible_job_id }}
+      # Register the result to a variable...
+      register: job_result
+      # ...and wait until task has finished...
+      until: job_result.finished
+      retries: 30
