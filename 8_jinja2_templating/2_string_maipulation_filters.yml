@@ -1,0 +1,53 @@
+---
+
+# Update the msg field in debug task to print name in title case - "The name is Bond! James Bond!"
+
+# Ansible playbook filters for formatting data:
+# Documentation: http://docs.ansible.com/ansible/latest/playbooks_filters.html#filters-for-formatting-data
+
+# Jinja2 Docs:
+# https://jinja.palletsprojects.com/
+
+# ------------------------------
+#           BEFORE
+# ------------------------------
+#-
+#  name: Test Jinja2 Templating
+#  hosts: localhost
+#  vars:
+#    first_name: James
+#    last_name: Bond
+#  tasks:
+#  - debug:
+#      msg: ''
+# ------------------------------
+#           AFTER
+# ------------------------------
+-
+  name: Test Jinja2 Templating
+  hosts: localhost
+  vars:
+    first_name: james
+    last_name: bond
+  tasks:
+  - debug:
+      # Upper case
+      # The name is BOND! JAMES BOND!
+      msg: 'The name is {{ last_name | upper }}! {{ first_name | upper }} {{ last_name | upper }}!'
+
+      # Lower case
+      # The name is bond! james bond!
+      # msg: 'The name is {{ last_name | lower }}! {{ first_name | lower }} {{ last_name | lower }}!'
+      
+      # Title - 1st letter upper case
+      # The name is Bond! James Bond!
+      # msg: 'The name is {{ last_name | title }}! {{ first_name | title }} {{ last_name | title }}!'
+      
+      # Replace value in variable
+      # The name is Bourne! James Bourne!
+      # msg: 'The name is {{ last_name | replace("Bond" , "Bourne") }}! {{ first_name | title }} {{ last_name | replace("Bond" , "Bourne") }}!'
+      
+      # Default value
+      # Playbook fails if the variable is not initialized. Set default value to avoid failing.
+      # The name is James Bond!
+      # msg: 'The name is {{ first_name | default("James") }} {{ last_name | title }}!'

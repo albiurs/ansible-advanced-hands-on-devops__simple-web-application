@@ -1,0 +1,81 @@
+---
+
+# Ansible playbook filters for formatting data:
+# Documentation: http://docs.ansible.com/ansible/latest/playbooks_filters.html#filters-for-formatting-data
+
+# Jinja2 Docs:
+# https://jinja.palletsprojects.com/
+
+
+
+# List and set 
+##############
+
+# min filter
+# {{ [1,2,3] | min }}   -> 1
+
+# max filter
+# {{ [1,2,3] | max }}   -> 3
+
+# unique filter
+# {{ [1,2,3,2] | unique }}   -> 1,2,3
+
+# union filter
+# {{ [1,2,3,4] | union([4,5]) }}   -> 1,2,3,4,5
+
+# intersect filter
+# {{ [1,2,3,4] | intersect([4,5]) }}   -> 4
+
+# Random number
+# {{ 100 | random }}  -> random number from 0 to 100
+
+# Join
+# {{ ["The", "name", "is", "Bond"] | join(" ") }}   -> The name is Bond
+
+
+# ------------------------------
+#           BEFORE
+# ------------------------------
+#-
+#  name: Install Dependencies
+#  hosts: localhost
+#  vars:
+#    web_dependencies:
+#         - python
+#         - python-setuptools
+#         - python-dev
+#         - build-essential
+#         - python-pip
+#         - python-mysqldb
+#    sql_dependencies:
+#         - python
+#         - python-mysqldb
+#  tasks:
+#  - name: Install dependencies
+#    apt: name='{{ item }}' state=installed
+#    with_items: '{{  }}'
+#
+
+# ------------------------------
+#           AFTER
+# ------------------------------
+-
+  name: Install Dependencies
+  hosts: localhost
+  vars:
+    web_dependencies:
+         - python
+         - python-setuptools
+         - python-dev
+         - build-essential
+         - python-pip
+         - python-mysqldb
+    sql_dependencies:
+         - python
+         - python-mysqldb
+  tasks:
+  - name: Install dependencies
+    apt: name='{{ item }}' state=installed
+    with_items: '{{ sql_dependencies | union(web_dependencies) }}'
+
+

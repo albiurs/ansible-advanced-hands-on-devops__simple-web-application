@@ -1,0 +1,69 @@
+---
+
+# Ansible playbook filters for formatting data:
+# Documentation: http://docs.ansible.com/ansible/latest/playbooks_filters.html#filters-for-formatting-data
+
+# Jinja2 Docs:
+# https://jinja.palletsprojects.com/
+
+# Update the msg field in debug task to print the lowest number in the given list using jinja2 filter "min" - "Lowest = 6"
+# Documentation: http://docs.ansible.com/ansible/latest/playbooks_filters.html#filters-for-formatting-data
+
+
+# List and set 
+##############
+
+# min filter
+# {{ [1,2,3] | min }}   -> 1
+
+# max filter
+# {{ [1,2,3] | max }}   -> 3
+
+# unique filter
+# {{ [1,2,3,2] | unique }}   -> 1,2,3
+
+# union filter
+# {{ [1,2,3,4] | union([4,5]) }}   -> 1,2,3,4,5
+
+# intersect filter
+# {{ [1,2,3,4] | intersect([4,5]) }}   -> 4
+
+# Random number
+# {{ 100 | random }}  -> random number from 0 to 100
+
+# Join
+# {{ ["The", "name", "is", "Bond"] | join(" ") }}   -> The name is Bond
+
+
+# ------------------------------
+#           BEFORE
+# ------------------------------
+#-
+#  name: Test Jinja2 Templating
+#  hosts: localhost
+#  vars:
+#    array_of_numbers:
+#      - 12
+#      - 34
+#      - 06
+#      - 34
+#  tasks:
+#  - debug:
+#      msg: 'Lowest = '
+
+# ------------------------------
+#           AFTER
+# ------------------------------
+-
+  name: Test Jinja2 Templating
+  hosts: localhost
+  vars:
+    array_of_numbers:
+      - 12
+      - 34
+      - 06
+      - 34
+  tasks:
+  - debug:
+      msg: 'Lowest = {{ array_of_numbers | min }}'
+

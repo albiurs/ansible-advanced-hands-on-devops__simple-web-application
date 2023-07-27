@@ -1,0 +1,45 @@
+--- 
+
+# Ansible playbook filters for formatting data:
+# Documentation: http://docs.ansible.com/ansible/latest/playbooks_filters.html#filters-for-formatting-data
+
+# Jinja2 Docs:
+# https://jinja.palletsprojects.com/
+
+
+# File filters
+
+# {{ "/etc/hosts" | basename }}                 -> hosts
+# {{ "c:\windows\hosts" | win_basename }}       -> hosts
+# {{ "c:\windows\hosts" | win_splitdrive }}     -> ["c:", "\windows\hosts"]
+# {{ "c:\windows\hosts" | win_splitdrive | first }}     -> "c:" (1st element in the array)
+# {{ "c:\windows\hosts" | win_splitdrive | last }}      -> "\windows\hosts" (last element in the array)
+
+
+# Retrieve the file name from a given path in linux
+# Task: Use the 'basename' filter to retrieve the file name
+
+# ------------------------------
+#           BEFORE
+# ------------------------------
+#-
+#  name: Get filename
+#  hosts: localhost
+#  vars:
+#    file_path: /etc/hosts
+#  tasks:
+#  - name: Get filename
+#    debug:
+#      msg: File Name = {{file_path }}
+# ------------------------------
+#           AFTER
+# ------------------------------
+-
+  name: Get filename
+  hosts: localhost
+  vars:
+    file_path: /etc/hosts
+  tasks:
+  - name: Get filename
+    debug:
+      msg: File Name = {{file_path | basename}}
