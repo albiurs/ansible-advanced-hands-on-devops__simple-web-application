@@ -11,34 +11,7 @@
 # Ansible async documentation:
 # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_async.html
 
-#
-## ------------------------------
-##           BEFORE
-## ------------------------------
-#-
-#  name: Deploy a mysql DB
-#  hosts: db_server
-#  roles:
-#    - python
-#    - mysql_db
-#
-#
-#-
-#  name: Deploy a Web Server
-#  hosts: web_server
-#  roles:
-#    - python
-#    - flask_web
-#
-#-
-#  name: Monitor Web Application for 6 Minutes
-#  hosts: web_server
-#  command: /opt/monitor_webapp.py
 
-
-# ------------------------------
-#           AFTER
-# ------------------------------
 -
   name: Deploy a mysql DB
   hosts: db_server
