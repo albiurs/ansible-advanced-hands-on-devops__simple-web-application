@@ -1,7 +1,12 @@
 ---
+
+# Ansible error handling documentation:
+# https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_error_handling.html
+
+# -> see below...
+
 - name: Deploy a web application
   hosts: app_servers
-  # Stop execution of the entire playbook if a single server fails. 
   any_errors_fatal: true
   vars:
     db_name: employee_db
@@ -51,3 +56,13 @@
 
     - name: Start web-application
       shell: FLASK_APP=/opt/app.py nohup flask run --host=0.0.0.0 &
+
+    - name: "Send notification email"
+      mail:
+        to: devops@corp.com
+        subject: Server Deployed!
+        body: Web Server Deployed Successfully
+      # ignore_errors:
+      # We have added a new task at the end to send a notification email, once all tasks are complete. However, the SMTP server is not very stable and these emails are not critical. 
+      # -> We would like Ansible to ignore even if the email task fails.
+      ignore_errors: yes

@@ -1,4 +1,10 @@
 ---
+
+# Ansible error handling documentation:
+# https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_error_handling.html
+
+# -> see below...
+
 - name: Deploy a web application
   hosts: app_servers
   any_errors_fatal: true
@@ -56,6 +62,12 @@
         to: devops@corp.com
         subject: Server Deployed!
         body: Web Server Deployed Successfully
-      # We have added a new task at the end to send a notification email, once all tasks are complete. However, the SMTP server is not very stable and these emails are not critical. 
-      # -> We would like Ansible to ignore even if the email task fails   
       ignore_errors: yes
+
+    - name: "Fail the playbook if errors are in the server log file"
+      command: cat /var/log/server.log
+      register: command_output
+      # failed_when:
+      # Fail the playbook if errors are in the server log file
+      # Boolean: failed_when -> TRUE or FALSE
+      failed_when: "'ERROR' in command_output.stdout"

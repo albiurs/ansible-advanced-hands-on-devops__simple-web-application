@@ -1,19 +1,25 @@
 ---
 
-# https://docs.ansible.com/ansible/latest/user_guide/playbooks_strategies.html
+# Ansible error handling documentation:
+# https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_error_handling.html
+
 
 - name: Deploy a web application
   hosts: app_servers
-  # Strategy:
-  # free: Run each host to until the end of the play as fast as it can. 
-  strategy: free
+  # Default behaviour:
+  # In calse of an error on one server, Ansible stops the operation on this failed server only. All other operations on the remaining servers proceed to the end.
+
+  # any_errors_fatal:
+  # Stop execution of the entire playbook if a single server fails. 
+  # This stops all parallel operations
+  any_errors_fatal: true
   vars:
     db_name: employee_db
     db_user: db_user
     db_password: Passw0rd
   tasks:
     - name: Install dependencies
-      apt: name={{ item }} state=installed
+      apt: name={{ item }} state=present
       with_items:
        - python
        - python-setuptools
@@ -25,7 +31,7 @@
     - name: Install MySQL database
       apt:
         name: "{{ item }}"
-        state:  installed
+        state:  present
       with_items:
        - mysql-server
        - mysql-client

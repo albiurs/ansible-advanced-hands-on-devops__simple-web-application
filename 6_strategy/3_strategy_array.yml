@@ -4,6 +4,7 @@
 
 - name: Deploy a web application
   hosts: app_servers
+  # Strategy:
   # Pass a strategy array:
   # Run the play against 
   # - 2 servers first, 

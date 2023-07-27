@@ -4,6 +4,7 @@
 
 - name: Deploy a web application
   hosts: app_servers
+  # Strategy:
   # Limit execution on just 2 servers at once. 
   serial: 2
   # serial: "20%"
